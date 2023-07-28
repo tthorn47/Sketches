@@ -1,5 +1,3 @@
-// Author: Prashant Pandey <prashant.pandey@utah.edu>
-// For use in CS6968 & CS5968
 
 #include <iostream>
 #include <cassert>
@@ -9,6 +7,9 @@
 #include <unordered_map>
 #include <fstream>
 #include "sketch.h"
+#include "misra.h"
+#include "count.h"
+#include "countMin.h"
 #include "zipf.h"
 
 using namespace std::chrono;
@@ -35,7 +36,7 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 	MisraGries mg(16000);
-	CountSketch cs(160,160,69,N,tau);
+	CountSketch cs(0,160,69,N,tau);
 	CountMin cm(160, 160, 69, N, tau);
 
 	high_resolution_clock::time_point t1, t2;
@@ -167,3 +168,5 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+
+template class MisraGries<>;

@@ -1,11 +1,11 @@
 all: test
 
-CC = g++
-OPT= -g -flto -Ofast --std=c++2a
+CC = g++-10
+OPT= -g -flto --std=c++2a
 CFLAGS = $(OPT) -Wall
 LIBS = -lssl -lcrypto 
 
-test: test.cc sketch.cc zipf.c hashutil.c
+test: test.cc zipf.c hashutil.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 clean:
