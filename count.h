@@ -11,8 +11,11 @@ template <typename T>
 CountSketch<T>::CountSketch(uint64_t hashes, uint64_t counters, uint64_t seed, uint64_t n, double phi)
 {
     assert(hashes > 0);
-    this->hashes = hashes;
     assert(counters > 0);
+    assert(n > 0);
+    assert(phi > 0);
+    
+    this->hashes = hashes;
     this->numCounters = counters;
     this->seed = seed;
     this->phi = phi;
@@ -20,14 +23,20 @@ CountSketch<T>::CountSketch(uint64_t hashes, uint64_t counters, uint64_t seed, u
 
     xorshift64_state s;
     s.a = seed;
+
     salts = (uint64_t *)malloc(hashes * sizeof(uint64_t) * 2);
+    this->counterArray = (int64_t *)calloc(hashes * counters, sizeof(int64_t));
+
+    if(salts == NULL || this->counterArray == NULL){
+        std::cout << "salts/counter malloc failed!\n";
+        exit(1); 
+    }
 
     for (size_t i = 0; i < hashes * 2; i++)
     {
         salts[i] = xorshift64(&s);
     }
 
-    this->counterArray = (int64_t *)calloc(hashes * counters, sizeof(int64_t));
     hh = new std::vector<hStore<T>>();
     counts = new std::unordered_map<uint64_t, double>();
 }
@@ -38,8 +47,7 @@ CountSketch<T>::~CountSketch()
 }
 
 template <typename T>
-void CountSketch<T>::add(T x)
-{
+std::multiset<int64_t> CountSketch<T>::iterateCounters(T x, bool inc){
     std::multiset<int64_t> ret;
     for (size_t i = 0; i < hashes; i++)
     {
@@ -51,8 +59,16 @@ void CountSketch<T>::add(T x)
         int64_t ins = inc * counterArray[row + column];
         ret.insert(ins);
     }
+    return ret;
+}
+
+template <typename T>
+void CountSketch<T>::add(T x)
+{
+    std::multiset<int64_t> ret = iterateCounters(x, true);
 
     auto medianCheck = ret.begin();
+
     int64_t freq;
     if (hashes != 1)
     {

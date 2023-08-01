@@ -71,6 +71,8 @@ private:
 
     std::unordered_map<T, double> *counts;
     std::vector<hStore<T>> *hh;
+    
+    std::multiset<int64_t> iterateCounters(T x, bool inc);
 };
 
 

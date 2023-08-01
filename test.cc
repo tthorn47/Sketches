@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 	MisraGries mg(16000);
-	CountSketch cs(0,160,69,N,tau);
+	CountSketch cs(160,160,69,N,tau);
 	CountMin cm(160, 160, 69, N, tau);
 
 	high_resolution_clock::time_point t1, t2;
